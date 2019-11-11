@@ -37,11 +37,13 @@ def simular(memory, jobs, mult):
 
     while count < tempoest:
         job = jobs[0]
+        ordem = randomize(job.ntotal, job.nseg)
 
         if count >= job.chegada:
+            print(f'\nInstante: {count} \n')
             print(f'\nIniciando processamento de: {job.nome}')
-            ordem = randomize(job.ntotal, job.nseg)
             print(f'Segmentos necessarios: {ordem} \n')
+
             for seg in ordem:
                 if job.salvos[seg - 1] == 1:
                     count += (len(job.segmentos[seg - 1]) - 1) * 10
@@ -52,6 +54,18 @@ def simular(memory, jobs, mult):
                     memory.loadMemory(job.segmentos[seg - 1])
                     memory.showMemory()
                     count += (len(job.segmentos[seg - 1]) - 1) * 15
+                if job.entradas > 0:
+                    print('\nInterrupcao: request de entrada\n')
+                    print(f'Instate: {count}')
+                    print('\nTratando request...\n')
+                    job.entradas -= 1
+                    count += 50
+                elif job.saidas > 0:
+                    print('\nInterrupcao: request de entrada\n')
+                    print(f'Instate: {count}')
+                    print('\nTratando request...\n')
+                    job.saidas -= 1
+                    count += 50
             print(f'\nInstante: {count} \n')
 
             jobs.pop(0)
