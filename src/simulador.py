@@ -27,59 +27,77 @@ def simular(memory, jobs, mult):
     print('\nInicializando simulacao...')
     print(f'Grau de multiprogramacao: {mult}')
 
-    count = 0
+    count = jobs[0].chegada
     tempoest = 0
+    cjob = []
+    ordem = []
 
     for job in jobs:
         tempoest += job.estimar()
 
     print(f'Tempo estimado de simulação: {tempoest}')
 
-    while count < tempoest:
-        job = jobs[0]
-        ordem = randomize(job.ntotal, job.nseg)
+    while len(jobs) > 0:
+        for i in range(mult):
+            if len(jobs) > 0:
+                cjob.append(jobs[0])
+                ordem.append(randomize(jobs[0].ntotal, jobs[0].nseg))
+                jobs.pop(0)
 
-        if count >= job.chegada:
+        if count >= cjob[0].chegada:
             print(f'\nInstante: {count} \n')
-            print(f'\nIniciando processamento de: {job.nome}')
-            print(f'Segmentos necessarios: {ordem} \n')
+            print('\nIniciando processamento de: ')
+            print(cjob)
+            for i in range(len(cjob)):
+                print(cjob[i].nome)
+                print(f'Segmentos necessarios: {ordem[i]} \n')
+                cjob[i].count = count
 
-            for seg in ordem:
-                if job.salvos[seg - 1] == 1:
-                    count += (len(job.segmentos[seg - 1]) - 1) * 10
-                else:
-                    print('\nInterrupcao: segmento nao salvo na memoria\n')
-                    print(f'\nInstante: {count} \n')
-                    print('\n Salvando segmento faltante... \n')
-                    memory.loadMemory(job.segmentos[seg - 1])
-                    memory.showMemory()
-                    count += (len(job.segmentos[seg - 1]) - 1) * 15
-                if job.entradas > 0:
-                    print('\nInterrupcao: request de entrada\n')
-                    print(f'Instate: {count}')
-                    print('\nTratando request...\n')
-                    job.entradas -= 1
-                    count += 50
-                elif job.saidas > 0:
-                    print('\nInterrupcao: request de entrada\n')
-                    print(f'Instate: {count}')
-                    print('\nTratando request...\n')
-                    job.saidas -= 1
-                    count += 50
+            for i in range(len(cjob)):
+                for seg in ordem[i]:
+                    if cjob[i].salvos[seg - 1] == 1:
+                        cjob[i].count += (len(cjob[i].segmentos[seg - 1]) - 1) * 10
+                        print('\nSegmento executado!')
+                        print(f'Instante: {cjob[i].count}')
+                    else:
+                        print('\nInterrupcao: segmento nao salvo na memoria\n')
+                        print(f'\nInstante: {cjob[i].count} \n')
+                        print('\n Salvando segmento faltante... \n')
+                        memory.loadMemory(cjob[i].segmentos[seg - 1])
+                        memory.showMemory()
+                        cjob[i].count += (len(cjob[i].segmentos[seg - 1]) - 1) * 15
+                        print('\nSegmento executado!')
+                        print(f'Instante: {cjob[i].count}')
+                    if cjob[i].entradas > 0:
+                        print('\nInterrupcao: request de entrada\n')
+                        print(f'Instate: {cjob[i].count}')
+                        print('\nTratando request...\n')
+                        cjob[i].entradas -= 1
+                        cjob[i].count += 50
+                    elif cjob[i].saidas > 0:
+                        print('\nInterrupcao: request de entrada\n')
+                        print(f'Instate: {cjob[i].count}')
+                        print('\nTratando request...\n')
+                        cjob[i].saidas -= 1
+                        cjob[i].count += 50
+            
+            
+            counts = []
+            for i in range(len(cjob)):
+                counts.append(cjob[i].count)
+            counts.sort()
+            count = counts[-1]
             print(f'\nInstante: {count} \n')
 
-            jobs.pop(0)
-            if len(jobs) == 0:
-                print(f'\n Fim da simulacao! \nInstante: {count} \n')
-                return 0 
+            cjob.clear()
+            ordem.clear()
 
-
-        count += 1
+    print(f'\n Fim da simulacao! \nInstante: {count} \n')
 
 
 def main():
 
-    mult = 1
+    mult = '1'
 
     while(1):
         inicio()
@@ -103,9 +121,14 @@ def main():
 
             s = input('\nIniciar simulacao?(y/n): ')
             if s == 'y':
-                simular(memory, jobsched, mult)
+                simular(memory, jobsched, int(mult))
 
-        
+        elif op == '2':
+            print(f'Grau de multiprogramacao: {mult}')
+            op2 = input('Deseja alterar? (y/n): ')
+            if op2 == 'y':
+                mult = input('Novo grau de multiprogramacao: ')
+
         elif op == '3':
             return 0
 
