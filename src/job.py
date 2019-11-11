@@ -53,3 +53,10 @@ class Job():
             if self.salvos[i] == 0:
                 print(f'{self.segmentos[i][1:]}     Endereco: {self.segmentos[i][0]}')
         print('\n')
+
+    def estimar(self):
+        tempo = 0
+        for segmento in self.segmentos:
+            tempo += (len(segmento) - 1) * 10
+        tempo += (self.entradas + self.saidas) * 50
+        return tempo

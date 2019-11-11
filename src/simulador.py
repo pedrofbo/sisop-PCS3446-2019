@@ -28,8 +28,39 @@ def simular(memory, jobs, mult):
     print(f'Grau de multiprogramacao: {mult}')
 
     count = 0
+    tempoest = 0
 
-    #while count < 
+    for job in jobs:
+        tempoest += job.estimar()
+
+    print(f'Tempo estimado de simulação: {tempoest}')
+
+    while count < tempoest:
+        job = jobs[0]
+
+        if count >= job.chegada:
+            print(f'\nIniciando processamento de: {job.nome}')
+            ordem = randomize(job.ntotal, job.nseg)
+            print(f'Segmentos necessarios: {ordem} \n')
+            for seg in ordem:
+                if job.salvos[seg - 1] == 1:
+                    count += (len(job.segmentos[seg - 1]) - 1) * 10
+                else:
+                    print('\nInterrupcao: segmento nao salvo na memoria\n')
+                    print(f'\nInstante: {count} \n')
+                    print('\n Salvando segmento faltante... \n')
+                    memory.loadMemory(job.segmentos[seg - 1])
+                    memory.showMemory()
+                    count += (len(job.segmentos[seg - 1]) - 1) * 15
+            print(f'\nInstante: {count} \n')
+
+            jobs.pop(0)
+            if len(jobs) == 0:
+                print(f'\n Fim da simulacao! \nInstante: {count} \n')
+                return 0 
+
+
+        count += 1
 
 
 def main():
@@ -58,7 +89,7 @@ def main():
 
             s = input('\nIniciar simulacao?(y/n): ')
             if s == 'y':
-                pass
+                simular(memory, jobsched, mult)
 
         
         elif op == '3':
