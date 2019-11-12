@@ -70,16 +70,20 @@ def simular(memory, jobs, mult):
                         print(f'Instante: {cjob[i].count}')
                     if cjob[i].entradas > 0:
                         print('\nInterrupcao: request de entrada\n')
-                        print(f'Instate: {cjob[i].count}')
+                        print(f'Instante: {cjob[i].count}')
                         print('\nTratando request...\n')
                         cjob[i].entradas -= 1
                         cjob[i].count += 50
+                        print('\nInterrupcao tratada')
+                        print(f'Instante: {cjob[i].count}\n')
                     elif cjob[i].saidas > 0:
-                        print('\nInterrupcao: request de entrada\n')
-                        print(f'Instate: {cjob[i].count}')
+                        print('\nInterrupcao: request de saida\n')
+                        print(f'Instante: {cjob[i].count}')
                         print('\nTratando request...\n')
                         cjob[i].saidas -= 1
                         cjob[i].count += 50
+                        print('\nInterrupcao tratada')
+                        print(f'Instante: {cjob[i].count}\n')
             
             
             counts = []
@@ -93,6 +97,7 @@ def simular(memory, jobs, mult):
             ordem.clear()
 
     print(f'\n Fim da simulacao! \nInstante: {count} \n')
+    memory.reset()
 
 
 def main():

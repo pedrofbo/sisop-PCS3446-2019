@@ -32,6 +32,8 @@ class Job():
             else:
                 self.salvos.append(0)
 
+        self.count = 0
+
     def __repr__(self):
         return self.nome
 
